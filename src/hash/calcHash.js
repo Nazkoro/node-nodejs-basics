@@ -2,13 +2,11 @@ import crypto from 'crypto'
 import fs from 'fs'
 
 const calculateHash = async () => {
-    try {
-        const data =  fs.readFileSync(new URL('./files/fileToCalculateHashFor.txt', import.meta.url))
-        console.log(crypto.createHash('sha256').update(data).digest('hex'))
-    } catch (error) {
-        console.log(error)
-    }
-   
+    const hash = crypto.createHash('sha256');
+    const stream = fs.createReadStream(new URL('./files/fileToCalculateHashFor.txt', import.meta.url));
+    
+    stream.on('data', (chunk) => hash.update(chunk));
+    stream.on('end', () => console.log(hash.digest('hex')));
 };
 
 await calculateHash();
